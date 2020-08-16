@@ -147,7 +147,6 @@ $(async function() {
 
     // update the navigation bar
     showNavForLoggedInUser();
-    showAddNewStory();
   }
 
   /**Event handler for click My Stories
@@ -165,12 +164,15 @@ $(async function() {
     //hide the all-articles section
     hideElements();
     $myArticles.show();
+    console.log()
 
-    for (article of currentUser.ownStories) {
-      let tempStory = generateStoryHTML(article);
-      $myArticles.prepend(tempStory);
+    if ($('#my-articles > li').length === 0) {
+      for (article of currentUser.ownStories) {
+        let tempStory = generateStoryHTML(article);
+        tempStory.prepend('<a href="#" id="removeArticle" class="fa fa-trash" aria-hidden="true"><a>');
+        $myArticles.append(tempStory);
+      }
     }
-    console.log($('#my-articles > li').prepend('<a href="#" id="removeArticle" class="fa fa-trash" aria-hidden="true"><a>'));
   }
 
   //event handler for trask bine that removes a story
@@ -198,6 +200,10 @@ $(async function() {
     //hide the all-articles section
     hideElements();
     $favoritedArticles.show();
+
+    if (currentUser.favorites.length === 0){
+        $favoritedArticles.prepend('<h3>No favorited stories to show</h3>');
+    }
 
     for (favorite of currentUser.favorites) {
       let tempStory = generateStoryHTML(favorite);
@@ -235,7 +241,7 @@ $(async function() {
       e.target.innerHTML = ('&#9734');
     }
 
-    //when a story is unfavoriteed when just favorites are being viewed, remove that story element
+    //when a story is unfavorited when just favorites are being viewed, remove that story element
     if (favView) {
       e.target.parentNode.remove();
       console.log(currentUser.favorites)
@@ -311,7 +317,7 @@ $(async function() {
   }
 
   /* simple function to pull the hostname from a URL */
-  function getHostName(url) {
+  function getHostName(url) {//utility
     let hostName;
     if (url.indexOf("://") > -1) {
       hostName = url.split("/")[2];
@@ -326,7 +332,7 @@ $(async function() {
 
   /* sync current user information to localStorage */
 
-  function syncCurrentUserToLocalStorage() {
+  function syncCurrentUserToLocalStorage() {//utility
     if (currentUser) {
       localStorage.setItem("token", currentUser.loginToken);
       localStorage.setItem("username", currentUser.username);

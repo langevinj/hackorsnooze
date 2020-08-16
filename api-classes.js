@@ -80,8 +80,14 @@ class User {
         password,
         name
       }
-    });
-
+    })
+      //catches and alerts someone attempting to signup if the username is already taken
+      .catch(function (error){
+        if (error.response) {
+          alert(error.response.data.error.title)
+          $("#create-account-form").trigger("reset");
+        }
+      });
     // build a new User instance from the API response
     const newUser = new User(response.data.user);
 
@@ -146,6 +152,16 @@ class User {
     existingUser.ownStories = response.data.user.stories.map(s => new Story(s));
     return existingUser;
   }
+
+  // static async setExistingUser(response, existingUser){
+  //   // instantiate Story instances for the user's favorites and ownStories
+  //   existingUser.favorites = response.data.user.favorites.map(s => new Story(s));
+  //   existingUser.ownStories = response.data.user.stories.map(s => new Story(s));
+
+  //   // attach the token to the newUser instance for convenience
+  //   existingUser.loginToken = response.data.token;
+  //   return existingUser;
+  // }
 
   //fetches all info from the API at /user/{username} using a token, then sets all instance properties from the respnse for the current user
   async retrieveDetails(){
